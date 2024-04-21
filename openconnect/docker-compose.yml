@@ -2,7 +2,20 @@ version: '3'
 
 services:
 
+  # certbot:
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   hostname: certbot
+  #   volumes:
+  #     - ./data/ssl:/etc/letsencrypt
+  #   ports:
+  #     - 80:80
+  #   command: certonly --non-interactive --force-renewal --standalone --preferred-challenges http --agree-tos --email mail@example.com -d example.com
+
   openconnect:
+    # depends_on:
+    #   certbot:
+    #     condition: service_completed_successfully
     image: r4venme/openconnect
     container_name: openconnect
     restart: unless-stopped
@@ -24,15 +37,3 @@ services:
       - /dev/net/tun:/dev/net/tun
     ports:
       - 43443:443/tcp
-
-  # certbot:
-  #   depends_on:
-  #     - openconnect
-  #   image: certbot/certbot
-  #   container_name: certbot
-  #   hostname: certbot
-  #   volumes:
-  #     - ./data/ssl:/etc/letsencrypt
-  #   ports:
-  #     - 80:80
-  #   command: certonly --non-interactive --force-renewal --standalone --preferred-challenges http --agree-tos --email mail@example.com -d example.com
