@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+
+  openconnect:
+    image: r4venme/openconnect
+    container_name: openconnect
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 200M
+    cap_add:
+      - NET_ADMIN
+    hostname: openconnect
+    environment:
+      - TZ="Europe/Moscow"
+      - SRV_CN="example.com"
+      - SRV_CA="Example CA"
+    volumes:
+      - ./data:/etc/ocserv
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 43443:443/tcp
+
+  # certbot:
+  #   depends_on:
+  #     - openconnect
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   hostname: certbot
+  #   volumes:
+  #     - ./data/ssl:/etc/letsencrypt
+  #   ports:
+  #     - 80:80
+  #   command: certonly --non-interactive --force-renewal --standalone --preferred-challenges http --agree-tos --email mail@example.com -d example.com
