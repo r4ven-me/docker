@@ -15,8 +15,12 @@ RUN apt-get update && \
         iptables \
         iproute2 \
         iputils-ping \
-        less
+        less && \
+    rm -rf /var/lib/apt/lists
 
 COPY ./ocserv.sh /
 
 CMD [ "/ocserv.sh" ]
+
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD  pidof -q ocserv-main || exit 1
