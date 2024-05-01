@@ -29,7 +29,7 @@ services:
     hostname: openconnect
     environment:
       - TZ="Europe/Moscow"
-      - SRV_CN="example.com"
+      - SRV_CN=example.com
       - SRV_CA="Example CA"
     volumes:
       - ./data:/etc/ocserv
