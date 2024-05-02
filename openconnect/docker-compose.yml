@@ -10,7 +10,7 @@ services:
   #     - ./data/ssl:/etc/letsencrypt
   #   ports:
   #     - 80:80
-  #   command: certonly --non-interactive --force-renewal --standalone --preferred-challenges http --agree-tos --email mail@example.com -d example.com
+  #   command: certonly --non-interactive --keep-until-expiring --standalone --preferred-challenges http --agree-tos --email mail@example.com -d example.com
 
   openconnect:
     # depends_on:

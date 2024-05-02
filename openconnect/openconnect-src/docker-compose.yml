@@ -21,7 +21,7 @@ services:
       - ./data/ssl:/etc/letsencrypt
     ports:
       - 80:80
-    command: certonly --non-interactive --force-renewal --standalone --preferred-challenges http --agree-tos --email ${USER_EMAIL} -d ${SRV_CN}
+    command: certonly --non-interactive --keep-until-expiring --standalone --preferred-challenges http --agree-tos --email ${USER_EMAIL} -d ${SRV_CN}
 
   openconnect:
     depends_on:
