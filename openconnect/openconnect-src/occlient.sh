@@ -12,6 +12,7 @@ CERT_PASS="examplepassword"
 VPN_ADDRESS="vpn.example.com"
 VPN_PORT="43443"
 VPN_GATEWAY="10.10.10.1"
+SSL_FLAG="1"
 
 ## System vars
 OC_BIN="$(which openconnect)"
@@ -45,7 +46,11 @@ check_gateway() {
 
 ## Connecting to VPN
 msg "Connecting to VPN..."
-"$OC_BIN" -c "$CERT_FILE" "${VPN_ADDRESS}":"${VPN_PORT}" <<< "$(echo ${CERT_PASS}$'\n')" &
+if [[ "$SSL_FLAG" == "1" ]]; then
+    "$OC_BIN" -c "$CERT_FILE" "${VPN_ADDRESS}":"${VPN_PORT}" <<< "$(echo ${CERT_PASS}$'\n')" &
+else
+    "$OC_BIN" -c "$CERT_FILE" "${VPN_ADDRESS}":"${VPN_PORT}" <<< "$(echo ${CERT_PASS}$'\n'yes$'\n')" &
+fi
 # VPN_PID=$!
 
 ## Checking availability of gateway and exiting if there is no connection
