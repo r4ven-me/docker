@@ -1,0 +1,53 @@
+---
+
+# Create docker network first
+# docker network create --opt com.docker.network.bridge.name=br_vpn --driver bridge --subnet 10.10.11.0/24 vpn_network
+
+networks:
+  vpn_network:
+    external: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.11.0/24
+
+services:
+
+  unbound:
+    image: mvance/unbound:latest
+    container_name: unbound
+    restart: unless-stopped
+    hostname: "unbound"
+    volumes:
+      - "./unbound_data/:/opt/unbound/etc/unbound/"
+    networks:
+      vpn_network:
+        ipv4_address: 10.10.11.200
+
+  pihole:
+    #depends_on: [unbound]
+    container_name: pihole
+    image: pihole/pihole:latest
+    restart: unless-stopped
+    hostname: pihole
+    dns:
+      - 127.0.0.1
+      - 10.10.11.200 # Points to unbound
+    environment:
+      TZ: "Europe/Moscow"
+      WEBPASSWORD: "" # Blank password - Can be whatever you want.
+      ServerIP: 10.10.11.100 # Internal IP of pihole
+      DNS1: 10.10.11.200 # Unbound IP
+      DNS2: 10.10.11.200 # If we don't specify two, it will auto pick google.
+    volumes:
+      - "./pihole_data/:/etc/pihole/"
+      - "./dnsmasq_data/:/etc/dnsmasq.d/"
+    ports:
+      - 127.0.0.1:80:80
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    networks:
+      vpn_network:
+        ipv4_address: 10.10.11.100
